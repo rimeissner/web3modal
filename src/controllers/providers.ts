@@ -19,7 +19,8 @@ import {
   filterMatches,
   IProviderUserOptions,
   getInjectedProvider,
-  findMatchingRequiredOptions
+  findMatchingRequiredOptions,
+  IProviderAutoConnector
 } from "../helpers";
 import { EventController } from "./events";
 
@@ -30,6 +31,7 @@ export class ProviderController {
 
   private eventController: EventController = new EventController();
   private injectedProvider: IProviderInfo | null = null;
+  private autoConnector: IProviderAutoConnector | null = null;
   private providers: IProviderDisplayWithConnector[] = [];
   private providerOptions: IProviderOptions;
   private network: string = "";
@@ -43,6 +45,19 @@ export class ProviderController {
     this.network = opts.network;
 
     this.injectedProvider = getInjectedProvider();
+
+    console.log("opts.autoConnectProvider", opts.autoConnectProvider)
+    if (opts.autoConnectProvider) {
+      const AutoConnector = list.autoConnect[opts.autoConnectProvider.id];
+      console.log("AutoConnector", AutoConnector)
+      if (AutoConnector) {
+        this.autoConnector = new AutoConnector(
+          list.connectors[opts.autoConnectProvider.id],
+          opts.autoConnectProvider.package,
+          opts.autoConnectProvider.options
+        );
+      }
+    }
 
     this.providers = Object.keys(list.connectors).map((id: string) => {
       let providerInfo: IProviderInfo;
@@ -212,6 +227,27 @@ export class ProviderController {
     const provider = this.getProvider(this.cachedProvider);
     if (typeof provider !== "undefined") {
       await this.connectTo(provider.id, provider.connector);
+    }
+  }
+
+  public async canAutoConnect() {
+    console.log("Autoconnect", this.autoConnector)
+    return (
+      (this.autoConnector && (await this.autoConnector.canConnect())) ||
+      !!this.cachedProvider
+    );
+  }
+
+  public async autoConnect() {
+    if (this.autoConnector && (await this.autoConnector.canConnect())) {
+      try {
+        const provider = await this.autoConnector.connect(this.network);
+        this.eventController.trigger(CONNECT_EVENT, provider);
+      } catch (error) {
+        this.eventController.trigger(ERROR_EVENT);
+      }
+    } else {
+      await this.connectToCachedProvider();
     }
   }
 

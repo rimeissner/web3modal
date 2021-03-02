@@ -8,6 +8,7 @@ export interface IProviderControllerOptions {
   cacheProvider: boolean;
   providerOptions: IProviderOptions;
   network: string;
+  autoConnectProvider?: IProviderAutoConnectProvider;
 }
 
 export interface IAbstractConnectorOptions {
@@ -38,19 +39,32 @@ export interface IProviderPackageOptions {
   required?: RequiredOption[];
 }
 
+export interface IProviderOption {
+  package: any;
+  options?: any;
+  connector?: Connector;
+  display?: Partial<IProviderDisplay>;
+}
+
 export interface IProviderOptions {
-  [id: string]: {
-    package: any;
-    options?: any;
-    connector?: Connector;
-    display?: Partial<IProviderDisplay>;
-  };
+  [id: string]: IProviderOption;
+}
+
+export interface IProviderAutoConnectProvider {
+  id: string;
+  package: any;
+  options?: any;
 }
 
 export interface IProviderDisplayWithConnector extends IProviderDisplay {
   id: string;
   connector: any;
   package?: IProviderPackageOptions;
+}
+
+export interface IProviderAutoConnector {
+  connect: (network: string | undefined) => Promise<any>;
+  canConnect: () => Promise<boolean>;
 }
 
 export interface IProviderUserOptions {

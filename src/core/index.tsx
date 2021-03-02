@@ -50,6 +50,7 @@ export class Core {
       disableInjectedProvider: options.disableInjectedProvider,
       cacheProvider: options.cacheProvider,
       providerOptions: options.providerOptions,
+      autoConnectProvider: options.autoConnectProvider,
       network: options.network
     });
 
@@ -93,8 +94,8 @@ export class Core {
     });
 
   public async toggleModal(): Promise<void> {
-    if (this.cachedProvider) {
-      await this.providerController.connectToCachedProvider();
+    if (await this.providerController.canAutoConnect()) {
+      await this.providerController.autoConnect();
       return;
     }
     if (
@@ -134,6 +135,10 @@ export class Core {
 
   public setCachedProvider(id: string): void {
     this.providerController.setCachedProvider(id);
+  }
+
+  public async canAutoConnect(): Promise<boolean> {
+    return this.providerController.canAutoConnect()
   }
 
   public async updateTheme(theme: string | ThemeColors): Promise<void> {
