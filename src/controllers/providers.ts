@@ -46,10 +46,8 @@ export class ProviderController {
 
     this.injectedProvider = getInjectedProvider();
 
-    console.log("opts.autoConnectProvider", opts.autoConnectProvider)
     if (opts.autoConnectProvider) {
       const AutoConnector = list.autoConnect[opts.autoConnectProvider.id];
-      console.log("AutoConnector", AutoConnector)
       if (AutoConnector) {
         this.autoConnector = new AutoConnector(
           list.connectors[opts.autoConnectProvider.id],
@@ -231,7 +229,6 @@ export class ProviderController {
   }
 
   public async canAutoConnect() {
-    console.log("Autoconnect", this.autoConnector)
     return (
       (this.autoConnector && (await this.autoConnector.canConnect())) ||
       !!this.cachedProvider
