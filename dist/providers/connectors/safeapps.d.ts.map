@@ -1,0 +1,1 @@
+{"version":3,"file":"safeapps.d.ts","sourceRoot":"","sources":["../../../src/providers/connectors/safeapps.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,wBAAwB;IACvC,GAAG,EAAE,GAAG,CAAC;IACT,IAAI,EAAE,GAAG,CAAA;CACV;AAED,QAAA,MAAM,gBAAgB,qBACF,GAAG,SACf,OAAO,CAAC,wBAAwB,CAAC,QAGxC,CAAC;AAEF,eAAe,gBAAgB,CAAC"}
